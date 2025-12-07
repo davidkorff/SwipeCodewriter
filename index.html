@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SwipeCode - Morse Code Gesture Input</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Background display layer (non-interactive) -->
+    <div class="display-layer">
+        <div class="message-container">
+            <div class="current-message" id="message"></div>
+        </div>
+        <div class="current-letter-container">
+            <div class="morse-sequence" id="morseSequence"></div>
+            <div class="current-letter" id="currentLetter">?</div>
+        </div>
+        <div class="instructions">
+            <span class="dot-hint">↑ DOT</span>
+            <span class="dash-hint">↓ DASH</span>
+        </div>
+    </div>
+
+    <!-- Gesture capture layer (full screen, on top) -->
+    <div class="gesture-layer" id="gestureArea">
+        <div class="swipe-indicator" id="swipeIndicator"></div>
+    </div>
+
+    <!-- Controls (bottom bar) -->
+    <div class="controls">
+        <button id="spaceBtn">SPACE</button>
+        <button id="deleteBtn">DELETE</button>
+        <button id="clearBtn">CLEAR</button>
+    </div>
+
+    <script src="morse.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

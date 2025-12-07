@@ -3,12 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SwipeCode - Morse Code Gesture Input</title>
+    <title>SwipeCode - Morse Code Chat</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h2>Settings</h2>
+            <label for="apiKeyInput">OpenAI API Key</label>
+            <input type="password" id="apiKeyInput" placeholder="sk-...">
+            <p class="hint">Your key is stored locally in your browser only.</p>
+            <div class="modal-buttons">
+                <button id="saveSettingsBtn">Save</button>
+                <button id="closeSettingsBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Background display layer (non-interactive) -->
     <div class="display-layer">
+        <!-- Chat response area -->
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-messages" id="chatMessages"></div>
+        </div>
+
         <div class="message-container">
             <div class="current-message" id="message"></div>
         </div>
@@ -29,12 +48,15 @@
 
     <!-- Controls (bottom bar) -->
     <div class="controls">
+        <button id="sendBtn" class="send-btn">SEND</button>
         <button id="spaceBtn">SPACE</button>
-        <button id="deleteBtn">DELETE</button>
-        <button id="clearBtn">CLEAR</button>
+        <button id="deleteBtn">DEL</button>
+        <button id="clearBtn">CLR</button>
+        <button id="settingsBtn" class="settings-btn">⚙</button>
     </div>
 
     <script src="morse.js"></script>
+    <script src="chat.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

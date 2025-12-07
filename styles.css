@@ -206,6 +206,176 @@ body {
     animation: letter-commit 0.3s ease;
 }
 
+/* Settings Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 400px;
+    width: 90%;
+}
+
+.modal-content h2 {
+    color: white;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.modal-content label {
+    display: block;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.modal-content input:focus {
+    outline: none;
+    border-color: #4ade80;
+}
+
+.modal-content .hint {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    margin-bottom: 20px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.modal-buttons button {
+    flex: 1;
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-buttons button:first-child {
+    background: #4ade80;
+    color: #1a1a2e;
+}
+
+.modal-buttons button:last-child {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Chat Container */
+.chat-container {
+    position: absolute;
+    top: 80px;
+    left: 20px;
+    right: 20px;
+    max-height: 150px;
+    overflow-y: auto;
+    pointer-events: auto;
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chat-message {
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    max-width: 85%;
+    word-wrap: break-word;
+}
+
+.chat-message.user {
+    background: rgba(74, 222, 128, 0.2);
+    color: #4ade80;
+    align-self: flex-end;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.chat-message.assistant {
+    background: rgba(100, 200, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+    align-self: flex-start;
+    border: 1px solid rgba(100, 200, 255, 0.3);
+}
+
+.chat-message.system {
+    background: rgba(255, 200, 50, 0.2);
+    color: rgba(255, 200, 50, 0.9);
+    align-self: center;
+    font-size: 0.8rem;
+    border: 1px solid rgba(255, 200, 50, 0.3);
+}
+
+/* Send Button */
+.controls .send-btn {
+    background: rgba(74, 222, 128, 0.3);
+    border-color: #4ade80;
+    color: #4ade80;
+}
+
+.controls .send-btn:hover,
+.controls .send-btn:active {
+    background: rgba(74, 222, 128, 0.5);
+}
+
+.controls .send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Settings Button */
+.controls .settings-btn {
+    max-width: 50px;
+    font-size: 1.2rem;
+}
+
+.controls .settings-btn.configured {
+    background: rgba(74, 222, 128, 0.2);
+    border-color: rgba(74, 222, 128, 0.5);
+}
+
 /* Responsive adjustments */
 @media (max-width: 480px) {
     .current-letter {
@@ -224,5 +394,15 @@ body {
     .instructions {
         gap: 30px;
         font-size: 0.9rem;
+    }
+
+    .chat-container {
+        top: 70px;
+        max-height: 120px;
+    }
+
+    .chat-message {
+        font-size: 0.8rem;
+        padding: 8px 12px;
     }
 }

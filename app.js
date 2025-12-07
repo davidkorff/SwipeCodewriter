@@ -25,11 +25,20 @@ class SwipeCodeApp {
         this.morseSequenceEl = document.getElementById('morseSequence');
         this.currentLetterEl = document.getElementById('currentLetter');
         this.messageEl = document.getElementById('message');
+        this.chatMessagesEl = document.getElementById('chatMessages');
 
         // Buttons
         this.spaceBtn = document.getElementById('spaceBtn');
         this.deleteBtn = document.getElementById('deleteBtn');
         this.clearBtn = document.getElementById('clearBtn');
+        this.sendBtn = document.getElementById('sendBtn');
+        this.settingsBtn = document.getElementById('settingsBtn');
+
+        // Modal elements
+        this.settingsModal = document.getElementById('settingsModal');
+        this.apiKeyInput = document.getElementById('apiKeyInput');
+        this.saveSettingsBtn = document.getElementById('saveSettingsBtn');
+        this.closeSettingsBtn = document.getElementById('closeSettingsBtn');
 
         this.init();
     }
@@ -55,11 +64,112 @@ class SwipeCodeApp {
         this.clearBtn.addEventListener('click', () => this.clearAll());
         this.clearBtn.addEventListener('touchend', (e) => { e.preventDefault(); this.clearAll(); });
 
+        this.sendBtn.addEventListener('click', () => this.sendMessage());
+        this.sendBtn.addEventListener('touchend', (e) => { e.preventDefault(); this.sendMessage(); });
+
+        this.settingsBtn.addEventListener('click', () => this.openSettings());
+        this.settingsBtn.addEventListener('touchend', (e) => { e.preventDefault(); this.openSettings(); });
+
+        // Settings modal events
+        this.saveSettingsBtn.addEventListener('click', () => this.saveSettings());
+        this.closeSettingsBtn.addEventListener('click', () => this.closeSettings());
+        this.settingsModal.addEventListener('click', (e) => {
+            if (e.target === this.settingsModal) this.closeSettings();
+        });
+
         // Keyboard support (for testing)
         document.addEventListener('keydown', (e) => this.onKeyDown(e));
 
         this.updateDisplay();
+        this.updateSettingsIndicator();
         console.log('SwipeCode initialized! Swipe up for dot, down for dash.');
+    }
+
+    // Settings management
+    openSettings() {
+        this.apiKeyInput.value = chatManager.getApiKey();
+        this.settingsModal.classList.add('visible');
+    }
+
+    closeSettings() {
+        this.settingsModal.classList.remove('visible');
+    }
+
+    saveSettings() {
+        const apiKey = this.apiKeyInput.value.trim();
+        chatManager.saveApiKey(apiKey);
+        this.closeSettings();
+        this.updateSettingsIndicator();
+        this.addSystemMessage('API key saved!');
+    }
+
+    updateSettingsIndicator() {
+        if (chatManager.hasApiKey()) {
+            this.settingsBtn.classList.add('configured');
+        } else {
+            this.settingsBtn.classList.remove('configured');
+        }
+    }
+
+    // Chat functionality
+    async sendMessage() {
+        // Commit any pending letter first
+        if (this.currentSequence) {
+            this.commitLetter();
+        }
+
+        const userMessage = this.message.trim();
+        if (!userMessage) {
+            this.addSystemMessage('Type a message first!');
+            return;
+        }
+
+        if (!chatManager.hasApiKey()) {
+            this.openSettings();
+            return;
+        }
+
+        // Add user message to chat
+        this.addChatMessage('user', userMessage);
+
+        // Clear the input
+        this.message = '';
+        this.updateDisplay();
+
+        // Show loading
+        this.sendBtn.disabled = true;
+        this.sendBtn.textContent = '...';
+
+        try {
+            const response = await chatManager.sendMessage(userMessage);
+            this.addChatMessage('assistant', response);
+        } catch (error) {
+            this.addSystemMessage('Error: ' + error.message);
+        } finally {
+            this.sendBtn.disabled = false;
+            this.sendBtn.textContent = 'SEND';
+        }
+    }
+
+    addChatMessage(role, content) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${role}`;
+        messageDiv.textContent = content;
+        this.chatMessagesEl.appendChild(messageDiv);
+        this.chatMessagesEl.scrollTop = this.chatMessagesEl.scrollHeight;
+    }
+
+    addSystemMessage(content) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message system';
+        messageDiv.textContent = content;
+        this.chatMessagesEl.appendChild(messageDiv);
+        this.chatMessagesEl.scrollTop = this.chatMessagesEl.scrollHeight;
+
+        // Auto-remove system messages after 3 seconds
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 3000);
     }
 
     // Touch handlers
@@ -100,6 +210,9 @@ class SwipeCodeApp {
 
     // Keyboard handler (for testing)
     onKeyDown(e) {
+        // Ignore if settings modal is open
+        if (this.settingsModal.classList.contains('visible')) return;
+
         if (e.key === 'ArrowUp' || e.key === 'w') {
             this.addDot();
         } else if (e.key === 'ArrowDown' || e.key === 's') {
@@ -110,7 +223,12 @@ class SwipeCodeApp {
         } else if (e.key === 'Backspace') {
             this.deleteLast();
         } else if (e.key === 'Enter') {
-            this.commitLetter();
+            e.preventDefault();
+            if (e.shiftKey) {
+                this.sendMessage();
+            } else {
+                this.commitLetter();
+            }
         } else if (e.key === 'Escape') {
             this.clearSequence();
         }
